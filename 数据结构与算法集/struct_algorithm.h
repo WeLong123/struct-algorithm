@@ -3,7 +3,7 @@
 作者：鑨
 时间：2026.1.31
 介绍：本次数据结构均为手搓，没有涉及到相互封装，在实现过程中最好运用相互封装，本文件仅为“裸展示”因此去除掉了相互封装
-学习资料：哔哩大学（最强双非）  船说系列—湖光老师   AI—阿里通义千问
+网址：https://github.com/WeLong123/struct-algorithm.git
 */
 /*
 * 日志：
@@ -17,6 +17,9 @@
 5.3更新
 更新了 系统栈法 将递归版阶乘 中序遍历 快速排序 转为非递归
 	   拓补序法 将归并排序 递归版转为非递归
+6.14更新
+更新了并查集：按大小合并 路径压缩
+重构了全局结构，避免了命名空间的错误
 */
 #pragma once
 # include<iostream>
@@ -34,177 +37,181 @@
 #include<time.h>
 #include<unordered_map>
 #include<iterator>
+namespace Base_struct {
 #define FATHER(n) (n/2)//父节点
 #define LEFT(n) (n*2)//左节点
 #define RIGHT(n) (n*2+1)//右节点
-typedef struct VECTOR {
-	int* data;
-	int size, count;
-}Vector;
-typedef struct QUEUE {
-	int* data;
-	int tail, head;
-	int count, size;
-}Queue;
-typedef struct NodeList {
-	int val;
-	struct NodeList* next;
-}NodeList;
-typedef struct STACK {
-	int* data;
-	int top;
-	int size;
-}Stack;
-typedef struct TREENODE {
-	int val;
-	int ltag, rtag;//线索化 是否为虚线
-	struct TREENODE* left, * right;
-}TreeNode;
-typedef struct HAFFTREE {
-	int fre;
-	char character;
-	struct HAFFTREE* left, * right;
-}HaffTree;
-typedef struct HEAP {
-	int* data, * __data;
-	int count, size;
-}Heap;
-Vector* initVector(int size);
-int fullVector(Vector* vec);
-int emptyVector(Vector* vec);
-bool insertVector(Vector* vec, int pos, int val);
-bool earseVector(Vector* vec, int pos);
-void clearVector(Vector* vec);
-void PrintVector(Vector* vec);
-int seek_PositionVector(Vector* vec, int pos);
-int seek_ValueVector(Vector* vec, int val);
-int sizeVector(Vector* vec);
+	typedef struct VECTOR {
+		int* data;
+		int size, count;
+	}Vector;
+	typedef struct QUEUE {
+		int* data;
+		int tail, head;
+		int count, size;
+	}Queue;
+	typedef struct NodeList {
+		int val;
+		struct NodeList* next;
+	}NodeList;
+	typedef struct STACK {
+		int* data;
+		int top;
+		int size;
+	}Stack;
+	typedef struct TREENODE {
+		int val;
+		int ltag, rtag;//线索化 是否为虚线
+		struct TREENODE* left, * right;
+	}TreeNode;
+	typedef struct HAFFTREE {
+		int fre;
+		char character;
+		struct HAFFTREE* left, * right;
+	}HaffTree;
+	typedef struct HEAP {
+		int* data, * __data;
+		int count, size;
+	}Heap;
+	Vector* initVector(int size);
+	int fullVector(Vector* vec);
+	int emptyVector(Vector* vec);
+	bool insertVector(Vector* vec, int pos, int val);
+	bool earseVector(Vector* vec, int pos);
+	void clearVector(Vector* vec);
+	void PrintVector(Vector* vec);
+	int seek_PositionVector(Vector* vec, int pos);
+	int seek_ValueVector(Vector* vec, int val);
+	int sizeVector(Vector* vec);
 
-NodeList* initNodeList(int val);
-void clearNodeList(NodeList* head);
-NodeList* insertNodeList(NodeList* head, int pos, int val);
-NodeList* tail_insertNodeList(NodeList* head, int val);
-NodeList* head_insertNodeList(NodeList* head, int val);
-NodeList* earseNodeList(NodeList* head, int pos);
-NodeList* reserveNodeList_all(NodeList* head);
-NodeList* reserveNodeList_2_2(NodeList* head);
-NodeList* reserveNodeList1(NodeList* head, int start, int end);
-NodeList* reserveNodeList(NodeList* head, int start, int end);
-NodeList* build_cycleNodeList(NodeList* head);
-bool check_cycleNodeList(NodeList* head);
-int size_cycleNodeList(NodeList* head);
-int size_allcycleNodeList(NodeList* head);
-void print_cycleNodeList(NodeList* head);
-void PrintNodeList(NodeList* head);
+	NodeList* initNodeList(int val);
+	void clearNodeList(NodeList* head);
+	NodeList* insertNodeList(NodeList* head, int pos, int val);
+	NodeList* tail_insertNodeList(NodeList* head, int val);
+	NodeList* head_insertNodeList(NodeList* head, int val);
+	NodeList* earseNodeList(NodeList* head, int pos);
+	NodeList* reserveNodeList_all(NodeList* head);
+	NodeList* reserveNodeList_2_2(NodeList* head);
+	NodeList* reserveNodeList1(NodeList* head, int start, int end);
+	NodeList* reserveNodeList(NodeList* head, int start, int end);
+	NodeList* build_cycleNodeList(NodeList* head);
+	bool check_cycleNodeList(NodeList* head);
+	int size_cycleNodeList(NodeList* head);
+	int size_allcycleNodeList(NodeList* head);
+	void print_cycleNodeList(NodeList* head);
+	void PrintNodeList(NodeList* head);
 
-Queue* initQueue(int size);
-void clearQueue(Queue* que);
-int emptyQueue(Queue* que);
-int fullQueue(Queue* que);
-bool pushQueue(Queue* que, int val);
-bool popQueue(Queue* que);
-int frontQueue(Queue* que);
-int sizeQueue(Queue* que);
-void PrintQueue(Queue* que);
+	Queue* initQueue(int size);
+	void clearQueue(Queue* que);
+	int emptyQueue(Queue* que);
+	int fullQueue(Queue* que);
+	bool pushQueue(Queue* que, int val);
+	bool popQueue(Queue* que);
+	int frontQueue(Queue* que);
+	int sizeQueue(Queue* que);
+	void PrintQueue(Queue* que);
 
-Stack* pushStack(Stack* sta, int val);
-bool popStack(Stack* sta);
-int frontStack(Stack* sta);
-void clearStack(Stack* sta);
-void Prints(Stack* sta);
+	Stack* pushStack(Stack* sta, int val);
+	bool popStack(Stack* sta);
+	int frontStack(Stack* sta);
+	void clearStack(Stack* sta);
+	void Prints(Stack* sta);
 
-TreeNode* initTree(int val);
-void clearTree(TreeNode* root);
-TreeNode* randomTree(int count);
-TreeNode* __randomTree(TreeNode* root);
-void bfs(TreeNode* root, int count);
-void __dfs(TreeNode* root, int* tot);
-void dfs(TreeNode* root);
-void __preOrder(TreeNode* root);
-void preOrder(TreeNode* root);
-void __inOrder(TreeNode* root);
-void inOrder(TreeNode* root);
-void __postOrder(TreeNode* root);
-void postOrder(TreeNode* root);
-void __tagTree(TreeNode* root, TreeNode** preroot);
-void tagTree(TreeNode* root);
-void __tagVerseTree(TreeNode* root);
-void tagVerseTree(TreeNode* root);
-void clearTagTree(TreeNode* root);
-void __tagPreOrder(TreeNode* root);
-void tagPreOrder(TreeNode* root);
-void tagInOrder(TreeNode* root);
-void __tagInOrder(TreeNode* root);
-void tagPostOrder(TreeNode* root);
-void __tagPostOrder(TreeNode* root);
-char* GeneralCode(TreeNode* root, char destination[]);
-void __GeneralCode(TreeNode* root, char buff[], int* len);
-TreeNode* antiGeneralCode(char buff[], int count);
-HaffTree* initHaffTree(int fre, char character);
-HaffTree* haffmanCode(char Data[][100], int count, char Result[][100]);
-void anti_HaffmanCode(HaffTree* root, int count, char Result[128][100], char buff[100], int k);
-void PrintHaffman(char Result[128][100]);
-void reserveTree(TreeNode* root);
-bool match_one_node(TreeNode* Tree, TreeNode* subTree);
-bool compareTreeAndSubTree(TreeNode* Tree, TreeNode* subTree);
+	TreeNode* initTree(int val);
+	void clearTree(TreeNode* root);
+	TreeNode* randomTree(int count);
+	TreeNode* __randomTree(TreeNode* root);
+	void bfs(TreeNode* root, int count);
+	void __dfs(TreeNode* root, int* tot);
+	void dfs(TreeNode* root);
+	void __preOrder(TreeNode* root);
+	void preOrder(TreeNode* root);
+	void __inOrder(TreeNode* root);
+	void inOrder(TreeNode* root);
+	void __postOrder(TreeNode* root);
+	void postOrder(TreeNode* root);
+	void __tagTree(TreeNode* root, TreeNode** preroot);
+	void tagTree(TreeNode* root);
+	void __tagVerseTree(TreeNode* root);
+	void tagVerseTree(TreeNode* root);
+	void clearTagTree(TreeNode* root);
+	void __tagPreOrder(TreeNode* root);
+	void tagPreOrder(TreeNode* root);
+	void tagInOrder(TreeNode* root);
+	void __tagInOrder(TreeNode* root);
+	void tagPostOrder(TreeNode* root);
+	void __tagPostOrder(TreeNode* root);
+	char* GeneralCode(TreeNode* root, char destination[]);
+	void __GeneralCode(TreeNode* root, char buff[], int* len);
+	TreeNode* antiGeneralCode(char buff[], int count);
+	HaffTree* initHaffTree(int fre, char character);
+	HaffTree* haffmanCode(char Data[][100], int count, char Result[][100]);
+	void anti_HaffmanCode(HaffTree* root, int count, char Result[128][100], char buff[100], int k);
+	void PrintHaffman(char Result[128][100]);
+	void reserveTree(TreeNode* root);
+	bool match_one_node(TreeNode* Tree, TreeNode* subTree);
+	bool compareTreeAndSubTree(TreeNode* Tree, TreeNode* subTree);
 
-Heap* initHeap(int);
-void clearHeap(Heap* h);
-void swap_arr(int* arr, int index1, int index2);
-void up_update_small(int* data, int index);
-void down_update_small(int* data, int index, int len);
-void up_update_large(int* data, int index);
-void down_update_large(int* data, int index, int len);
-int fullHeap(Heap* heap);
-int emptyHeap(Heap* heap);
-void pushHeap_small(Heap* heap, int val); 
-void pushHeap_large(Heap* heap, int val);
-void popHeap_small(Heap* heap);
-void popHeap_large(Heap* heap);
-int frontHeap(Heap* heap);
-void linearHeap_small(int* arr, int len);
-void linearHeap_large(int* arr, int len);
-void PrintHeap(Heap* heap);
-/*
-HeapTree* initHeapTree(int fre, char ch);
-void clearHeapTree(HeapTree* root);\
-Heap* initHeap(int size) ;
-int emptyHeap(Heap* h);
-int fullHeap(Heap* h);
-HeapTree* frontHeap(Heap* h);
-void swapHeap(Heap* h, int index1,int index2);
-void up_updatehaff(Heap* h, int index);
-void down_updatehaff(Heap* h,int index) ;
-int popHeap(Heap* h);
-int pushHeap(Heap* h,HeapTree*root);
-HeapTree* haffmanTree_build(Heap*h);
-void __antiHaffmanCode(HeapTree* root, char buff[128][100],char result[], int k);
-void antiHaffmanCode(HeapTree* root,char buff[128][100]);*/
+	Heap* initHeap(int);
+	void clearHeap(Heap* h);
+	void swap_arr(int* arr, int index1, int index2);
+	void up_update_small(int* data, int index);
+	void down_update_small(int* data, int index, int len);
+	void up_update_large(int* data, int index);
+	void down_update_large(int* data, int index, int len);
+	int fullHeap(Heap* heap);
+	int emptyHeap(Heap* heap);
+	void pushHeap_small(Heap* heap, int val);
+	void pushHeap_large(Heap* heap, int val);
+	void popHeap_small(Heap* heap);
+	void popHeap_large(Heap* heap);
+	int frontHeap(Heap* heap);
+	void linearHeap_small(int* arr, int len);
+	void linearHeap_large(int* arr, int len);
+	void PrintHeap(Heap* heap);
+	/*
+	HeapTree* initHeapTree(int fre, char ch);
+	void clearHeapTree(HeapTree* root);\
+	Heap* initHeap(int size) ;
+	int emptyHeap(Heap* h);
+	int fullHeap(Heap* h);
+	HeapTree* frontHeap(Heap* h);
+	void swapHeap(Heap* h, int index1,int index2);
+	void up_updatehaff(Heap* h, int index);
+	void down_updatehaff(Heap* h,int index) ;
+	int popHeap(Heap* h);
+	int pushHeap(Heap* h,HeapTree*root);
+	HeapTree* haffmanTree_build(Heap*h);
+	void __antiHaffmanCode(HeapTree* root, char buff[128][100],char result[], int k);
+	void antiHaffmanCode(HeapTree* root,char buff[128][100]);*/ 
+}
 //-----------------跳跃表
+namespace SkipList_ {
 #define MAX_LEVEL 32
-class Node {
-public:
-	int val, level;
-	Node* up, * down, * next;
-	Node(int val = 0, int level = 0);
-	~Node();
-};
-class SkipList {
-protected:
-	int max_level, Node_max_level;
-	Node* head, * tail;
-	int getRandomLevel();
-	double getRandomDouble();
-private:
-	void getMaxLevel();
-public:
-	SkipList();
-	~SkipList();
-	Node* find(int val);
-	bool insert(int val);
-	void output();
-	void erase(int val);
-};
+	class Node {
+	public:
+		int val, level;
+		Node* up, * down, * next;
+		Node(int val = 0, int level = 0);
+		~Node();
+	};
+	class SkipList {
+	protected:
+		int max_level, Node_max_level;
+		Node* head, * tail;
+		int getRandomLevel();
+		double getRandomDouble();
+	private:
+		void getMaxLevel();
+	public:
+		SkipList();
+		~SkipList();
+		Node* find(int val);
+		bool insert(int val);
+		void output();
+		void erase(int val);
+	};
+}
 //-------------------------哈希表
 namespace HashList_ {
 	struct Node {

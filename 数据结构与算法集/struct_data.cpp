@@ -7,6 +7,7 @@
 */
 # define _CRT_SECURE_NO_WARNINGS
 #include"struct_algorithm.h"
+namespace Base_struct{
 //-------------------------------------------顺序表
 //初始化
 Vector* initVector(int size) {
@@ -1075,164 +1076,167 @@ void antiHaffmanCode(HeapTree* root,char buff[128][100]) {
 	char result[100] = { 0 };
 	__antiHaffmanCode(root, buff, result, 0);
 }*/
-//------------------------跳跃表
-//构造函数编写
-Node::Node(int val, int level) :val(val), level(level) {
-	up = down = next = NULL;
 }
-//析构函数编写
-Node::~Node() {}
-//获得随机数
-int SkipList::getRandomLevel() {
+namespace SkipList_ {
+	//------------------------跳跃表
+	//构造函数编写
+	Node::Node(int val, int level) :val(val), level(level) {
+		up = down = next = NULL;
+	}
+	//析构函数编写
+	Node::~Node() {}
+	//获得随机数
+	int SkipList::getRandomLevel() {
 #define DESIDE 1.0/2.0
-	int ret = 1;
-	while (1) {
-		if (ret < MAX_LEVEL && getRandomDouble() >= DESIDE)ret++;
-		else break;
-	}
-	return ret;
+		int ret = 1;
+		while (1) {
+			if (ret < MAX_LEVEL && getRandomDouble() >= DESIDE)ret++;
+			else break;
+		}
+		return ret;
 #undef DESIDE
-}
-double SkipList::getRandomDouble() {
-	return (rand() % 10000 * 1.0) / 10000;
-}
-void SkipList::getMaxLevel()
-{
-	Node* temp = head;
-	while (temp) {
-		if (temp->next->val != tail->val) { Node_max_level = temp->next->level; return; }
-		else temp = temp->down;
 	}
-	return;
-}
-//编写构造函数
-SkipList::SkipList() {
-	Node_max_level = 0;
-	max_level = MAX_LEVEL;
-	std::vector<Node*>arr_head(max_level);
-	std::vector<Node*>arr_tail(max_level);
-	for (int i = 0; i < max_level; i++) {
-		arr_head[i] = new Node(INT32_MIN, i + 1);
-		arr_tail[i] = new Node(INT32_MAX, i + 1);
+	double SkipList::getRandomDouble() {
+		return (rand() % 10000 * 1.0) / 10000;
 	}
-	for (int i = 0; i < max_level; i++) {
-		if (i) {
-			arr_head[i]->down = arr_head[i - 1];
-			arr_tail[i]->down = arr_tail[i - 1];
-		}
-		else {
-			arr_head[i]->down = NULL;
-			arr_tail[i]->down = NULL;
-		}
-		if (i != max_level - 1) {
-			arr_head[i]->up = arr_head[i + 1];
-			arr_tail[i]->up = arr_tail[i + 1];
-		}
-		else {
-			arr_head[i]->up = NULL;
-			arr_tail[i]->up = NULL;
-		}
-		arr_head[i]->next = arr_tail[i];
-	}
-	head = arr_head[max_level - 1];
-	tail = arr_tail[max_level - 1];
-}
-//编写析构函数
-SkipList::~SkipList() {
-	Node* p = head, * q;
-	for (int i = 0; i < max_level; i++) {
-		q = p;
-		p = p->down;
-		while (q) {
-			Node* temp = q->next;
-			delete q;
-			q = temp;
-		}
-	}
-}
-//编写查找函数
-Node* SkipList::find(int val) {
-	Node* temp = head;
-	while (temp) {
-		if (temp->next->val == val)return temp->next;
-		else if (temp->next->val < val)temp = temp->next;
-		else temp = temp->down;
-	}
-	return NULL;
-}
-//插入
-bool SkipList::insert(int val) {
-	Node* temp = head;
-	int newLevel = getRandomLevel();
-	Node* newNode = NULL, * p;
-	std::vector<Node*>arr(newLevel);
-	for (int i = 0; i < newLevel; i++) {
-		arr[i] = new Node(val, i + 1);
-	}
-	for (int i = 0; i < newLevel; i++) {
-		if (i)arr[i]->down = arr[i - 1];
-		else arr[i]->down = NULL;
-		if (i != newLevel - 1)arr[i]->up = arr[i + 1];
-		else arr[i]->up = NULL;
-	}
-	newNode = arr[newLevel - 1];
-	p = newNode;
-	for (; temp->level != newNode->level; temp = temp->down);
-	while (temp) {
-		if (temp->next->val == p->val)return false;
-		else if (temp->next->val > p->val) {
-			p->next = temp->next;
-			temp->next = p;
-			p = p->down;
-			temp = temp->down;
-		}
-		else {
-			temp = temp->next;
-		}
-	}
-	if (newLevel > Node_max_level)Node_max_level = newLevel;
-	return true;
-}
-//输出
-void SkipList::output() {
-	int len = 0;
-	Node* p = head;
-	for (; p->down; p = p->down);
-	for (int i = 0; i < Node_max_level; i++) {
-		len += printf("%4d", i + 1);
-	}
-	std::cout << '\n';
-	for (int i = 0; i < len; i++) {
-		printf("-");
-	}
-	std::cout << '\n';
-	p = p->next;
-	for (; p->val != INT32_MAX; p = p->next) {
-		Node* temp = p;
+	void SkipList::getMaxLevel()
+	{
+		Node* temp = head;
 		while (temp) {
-			printf("%4d", temp->val);
-			temp = temp->up;
+			if (temp->next->val != tail->val) { Node_max_level = temp->next->level; return; }
+			else temp = temp->down;
 		}
-		std::cout << std::endl;
+		return;
 	}
-}
-//删除
-void SkipList::erase(int val)
-{
-	int delete_level = 0;
-	Node* temp_head = head;
-	while (temp_head) {
-		if (temp_head->next->val > val)temp_head = temp_head->down;
-		else if (temp_head->next->val < val)temp_head = temp_head->next;
-		else {
-			if (!delete_level)delete_level = temp_head->next->level;
-			Node* to_delete_node = temp_head->next;
-			temp_head->next = temp_head->next->next;
-			delete to_delete_node;
-			temp_head = temp_head->down;
+	//编写构造函数
+	SkipList::SkipList() {
+		Node_max_level = 0;
+		max_level = MAX_LEVEL;
+		std::vector<Node*>arr_head(max_level);
+		std::vector<Node*>arr_tail(max_level);
+		for (int i = 0; i < max_level; i++) {
+			arr_head[i] = new Node(INT32_MIN, i + 1);
+			arr_tail[i] = new Node(INT32_MAX, i + 1);
+		}
+		for (int i = 0; i < max_level; i++) {
+			if (i) {
+				arr_head[i]->down = arr_head[i - 1];
+				arr_tail[i]->down = arr_tail[i - 1];
+			}
+			else {
+				arr_head[i]->down = NULL;
+				arr_tail[i]->down = NULL;
+			}
+			if (i != max_level - 1) {
+				arr_head[i]->up = arr_head[i + 1];
+				arr_tail[i]->up = arr_tail[i + 1];
+			}
+			else {
+				arr_head[i]->up = NULL;
+				arr_tail[i]->up = NULL;
+			}
+			arr_head[i]->next = arr_tail[i];
+		}
+		head = arr_head[max_level - 1];
+		tail = arr_tail[max_level - 1];
+	}
+	//编写析构函数
+	SkipList::~SkipList() {
+		Node* p = head, * q;
+		for (int i = 0; i < max_level; i++) {
+			q = p;
+			p = p->down;
+			while (q) {
+				Node* temp = q->next;
+				delete q;
+				q = temp;
+			}
 		}
 	}
-	if (delete_level == Node_max_level)getMaxLevel();
+	//编写查找函数
+	Node* SkipList::find(int val) {
+		Node* temp = head;
+		while (temp) {
+			if (temp->next->val == val)return temp->next;
+			else if (temp->next->val < val)temp = temp->next;
+			else temp = temp->down;
+		}
+		return NULL;
+	}
+	//插入
+	bool SkipList::insert(int val) {
+		Node* temp = head;
+		int newLevel = getRandomLevel();
+		Node* newNode = NULL, * p;
+		std::vector<Node*>arr(newLevel);
+		for (int i = 0; i < newLevel; i++) {
+			arr[i] = new Node(val, i + 1);
+		}
+		for (int i = 0; i < newLevel; i++) {
+			if (i)arr[i]->down = arr[i - 1];
+			else arr[i]->down = NULL;
+			if (i != newLevel - 1)arr[i]->up = arr[i + 1];
+			else arr[i]->up = NULL;
+		}
+		newNode = arr[newLevel - 1];
+		p = newNode;
+		for (; temp->level != newNode->level; temp = temp->down);
+		while (temp) {
+			if (temp->next->val == p->val)return false;
+			else if (temp->next->val > p->val) {
+				p->next = temp->next;
+				temp->next = p;
+				p = p->down;
+				temp = temp->down;
+			}
+			else {
+				temp = temp->next;
+			}
+		}
+		if (newLevel > Node_max_level)Node_max_level = newLevel;
+		return true;
+	}
+	//输出
+	void SkipList::output() {
+		int len = 0;
+		Node* p = head;
+		for (; p->down; p = p->down);
+		for (int i = 0; i < Node_max_level; i++) {
+			len += printf("%4d", i + 1);
+		}
+		std::cout << '\n';
+		for (int i = 0; i < len; i++) {
+			printf("-");
+		}
+		std::cout << '\n';
+		p = p->next;
+		for (; p->val != INT32_MAX; p = p->next) {
+			Node* temp = p;
+			while (temp) {
+				printf("%4d", temp->val);
+				temp = temp->up;
+			}
+			std::cout << std::endl;
+		}
+	}
+	//删除
+	void SkipList::erase(int val)
+	{
+		int delete_level = 0;
+		Node* temp_head = head;
+		while (temp_head) {
+			if (temp_head->next->val > val)temp_head = temp_head->down;
+			else if (temp_head->next->val < val)temp_head = temp_head->next;
+			else {
+				if (!delete_level)delete_level = temp_head->next->level;
+				Node* to_delete_node = temp_head->next;
+				temp_head->next = temp_head->next->next;
+				delete to_delete_node;
+				temp_head = temp_head->down;
+			}
+		}
+		if (delete_level == Node_max_level)getMaxLevel();
+	}
 }
 //--------------------------------哈希表
 namespace HashList_ {

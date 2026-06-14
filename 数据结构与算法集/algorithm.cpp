@@ -10,6 +10,7 @@
 #include<set>
 #include<functional>
 #include<time.h>
+#include<iomanip>
 #include<math.h>
 //Ö¸ÊýÐÍÃ¶¾Ù
 static int arr_index[20] = { 0 };
@@ -540,8 +541,9 @@ namespace multi {
 //}
 #include"struct_algorithm.h"
 namespace in_order {
+	using namespace Base_struct;
 	struct Data {
-		TreeNode* n;
+		Base_struct::TreeNode* n;
 		int code, ret;
 		Data(TreeNode* n, int code) :n(n), code(code) {
 			ret = 0;
@@ -842,4 +844,124 @@ namespace non_quick_sort {
 //	printf("\n");
 //
 //	return 0;
+//}
+
+// --------------------------------------Quick-find
+//class Quick_find {
+//private:
+//#define MAX_COUNT 1000
+//	int color[MAX_COUNT + 1]{ 0 };
+//	int count;
+//public:
+//	Quick_find() = delete;
+//	explicit Quick_find(int n) :count{ n } {
+//		for (int i = 0; i <= n; i++)color[i] = i;
+//	}
+//	int find(int x) {
+//		return color[x];
+//	}
+//	bool merge(int x, int y) {
+//		if (color[x] == color[y])return false;
+//		int base_color = color[x];
+//		for (int i = 0; i <= count; i++) {
+//			if (color[i] == base_color)color[i] = color[y];
+//		}
+//		return true;
+//	}
+//	void output() {
+//		int length = 0;
+//		for (int i = 0; i <= count; i++) {
+//			std::cout << std::setw(3) << std::setfill(' ') << i;
+//			length += 3;
+//		}
+//		std::cout.put('\n');
+//		for (int i = 0; i <=length; i++) {
+//			std::cout.put('-');
+//		}
+//		std::cout.put('\n');
+//		for (int i = 0; i <= count; i++) {
+//			std::cout << std::setw(3) << std::setfill(' ') << color[i];
+//		}
+//	}
+//#undef MAX_COUNT
+//};
+//auto main() -> int {
+//	Quick_find q(10);
+//	int a, b;
+//	while (std::cin >> a >> b) {
+//		q.merge(a, b);
+//		q.output();
+//		std::cout.put('\n');
+//	}
+//}
+
+//---------------------------------------------------Quick-union
+#define MAX_COUNT 1000
+class Quick_union {
+private:
+	int arr[MAX_COUNT + 1]{ 0 };
+	int size[MAX_COUNT + 1]{ 0 };
+	int count;
+public:
+	Quick_union() = delete;
+	explicit Quick_union(int count) :count(count) {
+		if (count > MAX_COUNT)throw std::out_of_range("³¬³ö·¶Î§");
+		for (int i = 0; i <= count; i++) {
+			arr[i] = i;
+			size[i] = 1;
+		}
+	}
+	int find(int x) {
+		if (x > count || x < 0)throw std::runtime_error("x³¬·¶Î§");
+		if (arr[x] != x) {
+			arr[x] = find(arr[x]);
+		}
+		return arr[x];
+	}
+	bool merge(int x, int y) {
+		if (x > count || y > count || x < 0 || y < 0)return false;
+		int xx{ find(x) }, yy{ find(y) };
+		if (xx == yy)return false;
+		if (size[xx] <= size[yy]) {
+			arr[xx] = arr[yy];
+			size[yy] += size[xx];
+		}
+		else {
+			arr[yy] = arr[xx];
+			size[xx] += size[yy];
+		}
+		return true;
+	}
+	void output() {
+		int length = 0;
+		for (int i = 0; i <= count; i++) {
+			std::cout << std::setw(3) << std::setfill(' ') << i;
+			length += 3;
+		}
+		std::cout.put('\n');
+		for (int i = 0; i <= length; i++) {
+			std::cout.put('-');
+		}
+		std::cout.put('\n');
+		for (int i = 0; i <= count; i++) {
+			std::cout << std::setw(3) << std::setfill(' ') << arr[i];
+		}
+		std::cout.put('\n');
+		for (int i = 0; i <= count; i++) {
+			std::cout << std::setw(3) << std::setfill(' ') << size[i];
+		}
+	}
+};
+#undef MAX_COUNT
+//-------------------------²âÊÔ
+//auto main() -> int {
+//	Quick_union q(10);
+//	int a, b;
+//	q.output();
+//	std::cout.put('\n');
+//	while (std::cin >> a >> b) {
+//		q.merge(a, b);
+//		q.output();
+//		std::cout.put('\n');
+//	}
 //}
