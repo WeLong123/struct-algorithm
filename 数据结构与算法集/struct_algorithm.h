@@ -20,6 +20,8 @@
 6.14更新
 更新了并查集：按大小合并 路径压缩
 重构了全局结构，避免了命名空间的错误
+6.15更新
+更新了单调队列，单调栈
 */
 #pragma once
 # include<iostream>
@@ -37,6 +39,7 @@
 #include<time.h>
 #include<unordered_map>
 #include<iterator>
+#include<iomanip>
 namespace Base_struct {
 #define FATHER(n) (n/2)//父节点
 #define LEFT(n) (n*2)//左节点
@@ -361,4 +364,68 @@ public:
 	void erase(int val);
 	void output();
 	bool find(int val);
+};
+//----------------------------------------单调队列
+namespace monotonic_queue {
+	class Deque {
+	private:
+		int count_, size_;
+		int* data_;
+		int head_, tail_;
+	public:
+		int operator[](int index);
+		explicit Deque(int size = 16) :size_(size), count_(0), head_(0), tail_(0) {
+			data_ = new int[size];
+		}
+		~Deque() {
+			delete[] data_;
+		}
+		bool empty() { return count_ == 0; }
+		bool full() { return count_ == size_; }
+		void front_pop();
+		void front_push(int val);
+		void back_pop();
+		void back_push(int val);
+		int top();
+		int back();
+		void output();
+	};
+	class Monotonic_queue {
+	private:
+		int size_;
+		int interval_length_;
+		std::vector<int>arr_;
+		Deque que;
+		int step_{ 0 };
+	private:
+		void init();
+	public:
+		Monotonic_queue() = delete;
+		Monotonic_queue(std::vector<int>&& arr, int interval_length);
+		Monotonic_queue(std::vector<int>& arr, int interval_length);
+		Monotonic_queue(int arr[], int len, int interval_length);
+		~Monotonic_queue() {}
+		void Move();
+		void output();
+	};
+};
+//-----------------------------------------单调栈
+namespace monotonic_stack {
+	class Monotonic_stack {
+	private:
+		std::stack<int>sck_;
+		int size_;
+		std::vector<int>arr_;
+		std::vector<int>ind_;
+		bool right_;
+	private:
+		void init();
+	public:
+		Monotonic_stack() = delete;
+		Monotonic_stack(int arr[], int len, bool right = 1);
+		Monotonic_stack(std::vector<int>& arr, bool right = 1);
+		Monotonic_stack(std::vector<int>&& arr, bool right = 1);
+		~Monotonic_stack() {}
+		void output();
+	};
 };

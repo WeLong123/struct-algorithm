@@ -9,9 +9,19 @@
 #include<queue>
 #include<set>
 #include<functional>
-#include<time.h>
+#include<unordered_map>
+#include<iterator>
+#include<limits>
+#include<utility>
+#include<sstream>
+#include<stdexcept>
+#include<Windows.h>
+# include<conio.h>
+#include<fstream>
 #include<iomanip>
-#include<math.h>
+#include<chrono>
+#include<ctime>
+#include<cmath>
 //指数型枚举
 static int arr_index[20] = { 0 };
 void Print1(int n) {

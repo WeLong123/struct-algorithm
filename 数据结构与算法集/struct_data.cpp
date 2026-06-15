@@ -2112,3 +2112,208 @@ bool BTree::find(int val) {
 //
 //	}
 //}
+//-------------------------单调队列
+namespace monotonic_queue {
+	int Deque::operator[](int index) {
+		if (index < count_) {
+			return data_[(head_ + index) % size_];
+		}
+		throw std::out_of_range("下标超出范围");
+	}
+	void Deque::front_pop() {
+		if (empty())throw std::runtime_error("队列中已无元素，无法队首出队!");
+		head_++;
+		if (head_ == size_)head_ = 0;
+		count_--;
+	}
+	void Deque::front_push(int val) {
+		if (full())throw std::runtime_error("队列已满，无法队首入队！");
+		head_--;
+		if (head_ < 0)head_ = size_ - 1;
+		data_[head_] = val;
+		count_++;
+	}
+	void Deque::back_pop() {
+		if (empty())throw std::runtime_error("队列中已无元素，无法队尾出队！");
+		tail_--;
+		if (tail_ < 0)tail_ = size_ - 1;
+		count_--;
+	}
+	void Deque::back_push(int val) {
+		if (full())throw std::runtime_error("队列已满，无法队尾入队！");
+		data_[tail_++] = val;
+		count_++;
+		if (tail_ == size_)tail_ = 0;
+	}
+	int Deque::top() {
+		if (empty())throw std::runtime_error("队列已空，无法展示队首元素");
+		return data_[head_];
+	}
+	int Deque::back() {
+		if (empty())throw std::runtime_error("队列已空，无法展示队尾元素");
+		return data_[tail_ - 1];
+	}
+	void Deque::output() {
+		for (int i = 0; i < count_; i++) {
+			std::cout << std::setw(3) << std::setfill(' ') << i;
+		}
+		std::cout.put('\n');
+		for (int i = 0; i < count_; i++) {
+			std::cout << std::setw(3) << std::setfill('-') << '-';
+		}
+		std::cout.put('\n');
+		for (int i = 0; i < count_; i++) {
+			std::cout << std::setw(3) << std::setfill(' ') << data_[(head_ + i) % size_];
+		}
+	}
+	void Monotonic_queue::init() {
+		for (int i = step_; i < interval_length_ + step_; i++) {
+			while (!que.empty() && arr_[i] < arr_[que.back()])que.back_pop();
+			que.back_push(i);
+			if (i - que.top() == interval_length_)que.front_pop();
+		}
+	}
+	Monotonic_queue::Monotonic_queue(std::vector<int>&& arr, int interval_length) :que(arr.size()), size_(arr.size()), interval_length_(interval_length), arr_(arr) {
+		if (interval_length_ > size_)throw std::out_of_range("区间长度超过了数组长度！");
+		init();
+	}
+	Monotonic_queue::Monotonic_queue(std::vector<int>& arr, int interval_length) :que(arr.size()), size_(arr.size()), interval_length_(interval_length), arr_(arr) {
+		if (interval_length_ > size_)throw std::out_of_range("区间长度超过了数组长度！");
+		init();
+	}
+	Monotonic_queue::Monotonic_queue(int arr[], int len, int interval_length) :que(len), interval_length_(interval_length), size_(len), arr_(len) {
+		if (interval_length_ > size_)throw std::out_of_range("区间长度超过了数组长度！");
+		for (int i = 0; i < len; i++) {
+			arr_[i] = arr[i];
+		}
+		init();
+	}
+	void Monotonic_queue::Move() {
+		int i{ step_ + interval_length_ };
+		int last_i{ step_++ };
+		if (step_ + interval_length_ > size_) {
+			step_--;
+			throw std::out_of_range("窗口已经到达底部，无法再次移动！");
+		}
+		while (!que.empty() && arr_[i] < arr_[que.back()])que.back_pop();
+		que.back_push(i);
+		if (i - que.top() == interval_length_)que.front_pop();
+	}
+	void Monotonic_queue::output() {
+		for (int i = 0; i < size_; i++) {
+			std::cout << std::setw(3) << std::setfill(' ') << i;
+		}
+		std::cout.put('\n');
+		for (int i = 0; i < size_; i++) {
+			std::cout << std::setw(3) << std::setfill('-') << '-';
+		}
+		std::cout.put('\n');
+		for (int i = 0; i < size_; i++) {
+			std::cout << std::setw(3) << std::setfill(' ') << arr_[i];
+		}
+		//std::cout.put('\n');
+		//std::cout << "----------deque--------------\n";
+		//que.output();
+		//std::cout.put('\n');
+		//std::cout << "----------deque--------------\n";
+		std::cout.put('\n');
+		int que_ind = 0;
+		for (int i = 0; i < size_; i++) {
+			if (i < step_ + interval_length_ && i >= step_) {
+				if (i <= que[que_ind]) {
+					std::cout << std::setw(3) << std::setfill(' ') << arr_[que[que_ind]];
+				}
+				else {
+					que_ind++;
+					std::cout << std::setw(3) << std::setfill(' ') << arr_[que[que_ind]];
+				}
+			}
+			else {
+				std::cout << std::setw(3) << std::setfill('-') << '-';
+			}
+		}
+		std::cout.put('\n');
+	}
+	//-------------------测试
+	//auto main() -> int {
+	//	std::vector<int>q{ 2 ,7 ,8 ,5 ,6 ,2 ,3 ,4 ,1 ,10 ,9 };
+	//	Monotonic_queue que(q, 4);
+	//	que.output();
+	//	int a;
+	//	while (1) {
+	//		try {
+	//			std::cin >> a;
+	//			que.Move();
+	//			que.output();
+	//		}
+	//		catch (std::out_of_range& s) {
+	//			break;
+	//		}
+	//		catch (std::runtime_error& s) {
+	//			break;
+	//		}
+	//	}
+	//}
+};
+//------------------------------------单调栈
+namespace monotonic_stack {
+	void Monotonic_stack::init() {
+		if (right_) {
+			for (int i = 0; i < size_; i++) {
+				while (!sck_.empty() && arr_[i] < arr_[sck_.top()]) {
+					ind_[sck_.top()] = i;
+					sck_.pop();
+				}
+				sck_.push(i);
+			}
+		}
+		else {
+			for (int i = size_ - 1; i >= 0; i--) {
+				while (!sck_.empty() && arr_[i] < arr_[sck_.top()]) {
+					ind_[sck_.top()] = i;
+					sck_.pop();
+				}
+				sck_.push(i);
+			}
+		}
+		while (!sck_.empty()) {
+			ind_[sck_.top()] = -1;
+			sck_.pop();
+		}
+	}
+	Monotonic_stack::Monotonic_stack(int arr[], int len, bool right) :size_(len), arr_(len), right_(right), ind_(len) {
+		for (int i = 0; i < len; i++) {
+			arr_[i] = arr[i];
+		}
+		init();
+	}
+	Monotonic_stack::Monotonic_stack(std::vector<int>& arr, bool right) :size_(arr.size()), arr_(arr), right_(right), ind_(arr.size()) { init(); }
+	Monotonic_stack::Monotonic_stack(std::vector<int>&& arr, bool right) :size_(arr.size()), arr_(arr), right_(right), ind_(arr.size()) { init(); }
+	void Monotonic_stack::output() {
+		for (int i = 0; i < size_; i++) {
+			std::cout << std::setw(3) << std::setfill(' ') << i;
+		}
+		std::cout.put('\n');
+		for (int i = 0; i < size_; i++) {
+			std::cout << std::setw(3) << std::setfill('-') << '-';
+		}
+		std::cout.put('\n');
+		for (int i = 0; i < size_; i++) {
+			std::cout << std::setw(3) << std::setfill(' ') << arr_[i];
+		}
+		std::cout.put('\n');
+		for (int i = 0; i < size_; i++) {
+			std::cout << std::setw(3) << std::setfill(' ');
+			switch (ind_[i])
+			{
+			case -1:
+				std::cout << -1;
+				break;
+			default:
+				std::cout << arr_[ind_[i]];
+				break;
+			}
+		}
+		std::cout.put('\n');
+	}
+};
