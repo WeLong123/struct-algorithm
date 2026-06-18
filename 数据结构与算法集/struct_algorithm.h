@@ -24,10 +24,7 @@
 更新了单调队列，单调栈
 */
 #pragma once
-# include<iostream>
-# include<math.h>
-# include<string>
-# include<stdlib.h>
+#include<cstdlib>
 #include<vector>
 #include<map>
 #include<stack>
@@ -36,10 +33,24 @@
 #include<queue>
 #include<set>
 #include<functional>
-#include<time.h>
 #include<unordered_map>
 #include<iterator>
 #include<iomanip>
+#include<iostream>
+#include<string>
+#include<vector>
+#include<map>
+#include<stack>
+#include<limits>
+#include<utility>
+#include<sstream>
+#include<stdexcept>
+#include<Windows.h>
+# include<conio.h>
+#include<fstream>
+#include<chrono>
+#include<ctime>
+#include<cmath>
 namespace Base_struct {
 #define FATHER(n) (n/2)//父节点
 #define LEFT(n) (n*2)//左节点
